@@ -1,27 +1,32 @@
-name: Deploy Pages
+name: Deploy GitHub Pages
 
 on:
   push:
     branches:
-      - main  # zmień, jeśli używasz innej gałęzi
+      - main  # zmień, jeśli Twoja główna gałąź nazywa się inaczej
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2. Przygotuj folder public
       - name: Prepare public folder
         run: |
           mkdir -p public
-          cp -r pages/* public/
-          cp -r images public/
-          cp index.js public/
+          # Kopiowanie stron HTML i CSS
+          if [ -d pages ]; then cp -r pages/* public/; fi
+          # Kopiowanie obrazów
+          if [ -d images ]; then cp -r images public/; fi
+          # Kopiowanie JS
+          if [ -f index.js ]; then cp index.js public/; fi
 
+      # 3. Deploy do GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+        uses: actions/deploy-pages@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
