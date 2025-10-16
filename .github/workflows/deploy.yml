@@ -1,0 +1,27 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches:
+      - main  # zmień, jeśli używasz innej gałęzi
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Prepare public folder
+        run: |
+          mkdir -p public
+          cp -r pages/* public/
+          cp -r images public/
+          cp index.js public/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v7
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
